@@ -15,10 +15,10 @@ def index():
     return send_from_directory("static", "index.html")
 
 
-@app.route("/get_response_from_user_input", methods=["GET"])
-def get_response():
+@app.route("/get_response_from_user_input", methods=["POST"])
+def get_response_from_user_input():
     global chat_history_ids
-    input_text = request.args.get("input_text", None)
+    input_text = request.json.get("input_text", "")
     if not input_text:
         return jsonify({"response": "Error! No input text given.", "next_text": ""})
 
