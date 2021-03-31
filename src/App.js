@@ -3,16 +3,32 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+import Chat from "./Chat.js";
+
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
 const styles = {
   app: {
-    display: "grid",
+    display: "flex",
     padding: 16,
+  },
+  body: {
     textAlign: "center",
     justifyContent: "center",
+    width: "67%",
+  },
+  chat: {
+    top: 0,
+    right: 0,
+    borderLeftStyle: "solid",
+    height: "100%",
+    width: "33%",
+    position: "fixed",
+    overflow: "scroll",
+    display: "flex",
+    flexDirection: "column",
   },
   title: {
     fontSize: "32px",
@@ -22,6 +38,7 @@ const styles = {
 
 function App() {
   const [modalOpen, setModalOpen] = useState(true);
+  const [chats, setChats] = useState([]);
 
   const {
     transcript,
@@ -50,6 +67,7 @@ function App() {
           } else {
             console.log(next_text);
           }
+          setChats([...chats, transcript, next_text]);
         });
       });
       resetTranscript();
@@ -64,9 +82,16 @@ function App() {
   return (
     <>
       <div style={styles.app}>
-        <div style={styles.title}>Talk To Transformers</div>
-        <div>
-          <p>{transcript}</p>
+        <div style={styles.body}>
+          <div style={styles.title}>Talk To Transformers</div>
+          <div>
+            <p>{transcript}</p>
+          </div>
+        </div>
+        <div style={styles.chat}>
+          {chats.map((chat, index) => {
+            return <Chat key={index} index={index} message={chat} />;
+          })}
         </div>
       </div>
       <Modal
@@ -75,7 +100,7 @@ function App() {
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">Welcome!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
