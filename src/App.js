@@ -74,6 +74,11 @@ function App() {
     }
   }, [transcript, interimTranscript]);
 
+  useEffect(() => {
+    var element = document.getElementById("chatBox");
+    element.scrollTop = element.scrollHeight;
+  }, [chats]);
+
   const onCloseModal = () => {
     setModalOpen(false);
     SpeechRecognition.startListening({ continuous: true });
@@ -88,7 +93,7 @@ function App() {
             <p>{transcript}</p>
           </div>
         </div>
-        <div style={styles.chat}>
+        <div id="chatBox" style={styles.chat}>
           {chats.map((chat, index) => {
             return <Chat key={index} index={index} message={chat} />;
           })}
