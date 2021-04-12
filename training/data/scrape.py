@@ -18,7 +18,6 @@ reddit = praw.Reddit(
     user_agent=os.environ.get("redditName"),
 )
 
-MAX_DEPTH = 5
 tokenizer = TweetTokenizer(preserve_case=True)
 STOP_WORDS = set(nltk.corpus.stopwords.words("english"))
 
@@ -57,7 +56,7 @@ def valid_comment(comment):
     return True
 
 
-def scrape_subreddit(subreddit_name, num_posts):
+def scrape_subreddit(subreddit_name, num_posts, MAX_DEPTH=5):
     if os.path.isdir(subreddit_name):
         shutil.rmtree(f"./{subreddit_name}")
 
@@ -66,7 +65,7 @@ def scrape_subreddit(subreddit_name, num_posts):
     subreddit = reddit.subreddit(subreddit_name)
 
     posts = []
-    for post in tqdm(subreddit.hot(limit=num_posts)):
+    for post in tqdm(subreddit.hot(limit=num_posts), total=num_posts):
         posts.append([post.subreddit, post.id, post.url, post.num_comments, post.created])
 
         submission = reddit.submission(id=post.id)
@@ -107,5 +106,8 @@ if __name__ == "__main__":
     parser.add_argument(
     "--num_posts", type=int, default=100, help="number of posts to scrape",
     )
+    parser.add_argument(
+    "--max_depth", type=int, default=5, help="number of posts to scrape",
+    )
     args = parser.parse_args()
-    scrape_subreddit(args.subreddit, args.num_posts)
+    scrape_subreddit(args.subreddit, args.num_posts, MAX_DEPTH=args.max_depth)
