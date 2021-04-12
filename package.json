@@ -23,7 +23,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint ./",
     "lint-fix": "eslint ./ --fix",
-    "format": "prettier --write \"**/*.{js,jsx,json,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "app": "python deploy/app.py"
   },
   "proxy": "http://localhost:5000/",
   "eslintConfig": {
