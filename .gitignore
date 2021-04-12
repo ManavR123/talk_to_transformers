@@ -162,3 +162,7 @@ dmypy.json
 cython_debug/
 
 deploy/
+
+*.csv
+*/wandb
+*/models
