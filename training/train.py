@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 wandb.init(project="talk_to_transformers")
 wandb.config.update(args)
-wandb.run.name = args.dataset
+wandb.run.name = f"{args.dataset}-{args.size}"
 
 device = "cpu"
 if args.use_gpu:
