@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { MenuItem, Select } from "@material-ui/core/";
 import Chat from "./Chat.js";
 
 import SpeechRecognition, {
@@ -30,15 +30,31 @@ const styles = {
     display: "flex",
     flexDirection: "column",
   },
+  dropdown: {},
   title: {
     fontSize: "32px",
     textAlign: "center",
   },
 };
 
+const models = [
+  {
+    name: "Base",
+    url: "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large",
+  },
+  {
+    name: "Berkeley",
+    url:
+      "https://api-inference.huggingface.co/models/manav/dialogpt-medium-berkeley-reddit",
+  },
+];
+
 function App() {
   const [modalOpen, setModalOpen] = useState(true);
   const [chats, setChats] = useState([]);
+  const [modelURL, setModelURL] = useState(
+    "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large",
+  );
 
   const {
     transcript,
@@ -57,16 +73,21 @@ function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          input_text: transcript,
+          inputs: {
+            text: transcript,
+            past_user_inputs: chats.filter((element, index) => {
+              return index % 2 === 0;
+            }),
+            generated_responses: chats.filter((element, index) => {
+              return index % 2 === 1;
+            }),
+          },
+          url: modelURL,
         }),
       }).then((response) => {
         response.json().then((data) => {
-          const { response, next_text } = data;
-          if (response === "") {
-            console.log("ERROR!");
-          } else {
-            console.log(next_text);
-          }
+          const { next_text } = data;
+          console.log(next_text);
           setChats([...chats, transcript, next_text]);
         });
       });
@@ -89,6 +110,22 @@ function App() {
       <div style={styles.app}>
         <div style={styles.body}>
           <div style={styles.title}>Talk To Transformers</div>
+          <div style={styles.dropdown}>
+            <Select
+              autoWidth={true}
+              value={modelURL}
+              onChange={(e) => {
+                setModelURL(e.target.value);
+                setChats([]);
+              }}
+            >
+              {models.map(({ name, url }, i) => (
+                <MenuItem key={i} value={url}>
+                  {name}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
           <div>
             <p>{transcript}</p>
           </div>
@@ -111,9 +148,14 @@ function App() {
         <Modal.Body>
           <p>
             Welcome to Talk to Transformers! Here you will be able to have a
-            conversation with a GPT language model using your voice! To get
-            started, just click the button and begin talking!
-          </p>
+            conversation with a GPT language model using your voice!
+          </p>{" "}
+          <p>
+            We provide a variety of models finetuned on popular subreddits, so
+            if you want to have a conversation about something in particular,
+            you can select a differnt model in the dropdown.
+          </p>{" "}
+          <p>To get started, just click the button and begin talking!</p>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => onCloseModal()}>Start Conversation!</Button>
