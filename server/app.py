@@ -21,8 +21,9 @@ def get_response_from_user_input():
         "inputs": request.json.get("inputs")
     })
     response = requests.request("POST", request.json.get("url"), headers=headers, data=data)
+    response = json.loads(response.content.decode("utf-8"))
     next_text = response.get("generated_text")
-    return jsonify({next_text})
+    return jsonify({"next_text": next_text})
      
 
 
