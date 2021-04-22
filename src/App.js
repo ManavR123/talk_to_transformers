@@ -30,7 +30,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
   },
-  dropdown: {},
+  dropdown: { margin: 8, width: "20%", textAlign: "initial" },
   title: {
     fontSize: "32px",
     textAlign: "center",
@@ -51,6 +51,7 @@ const models = [
 
 function App() {
   const [modalOpen, setModalOpen] = useState(true);
+  const [isListening, setIsListening] = useState(true);
   const [chats, setChats] = useState([]);
   const [modelURL, setModelURL] = useState(
     "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large",
@@ -64,8 +65,10 @@ function App() {
 
   useEffect(() => {
     if (interimTranscript === "" && transcript !== "") {
-      console.log(transcript);
+      const user_text = transcript;
+      console.log(user_text);
       const url = "/get_response_from_user_input";
+      setIsListening(false);
       fetch(url, {
         method: "POST",
         headers: {
@@ -74,7 +77,7 @@ function App() {
         },
         body: JSON.stringify({
           inputs: {
-            text: transcript,
+            text: user_text,
             past_user_inputs: chats.filter((element, index) => {
               return index % 2 === 0;
             }),
@@ -84,14 +87,17 @@ function App() {
           },
           url: modelURL,
         }),
-      }).then((response) => {
-        response.json().then((data) => {
-          const { next_text } = data;
-          console.log(next_text);
-          setChats([...chats, transcript, next_text]);
-        });
-      });
+      })
+        .then((response) => {
+          response.json().then((data) => {
+            const { next_text } = data;
+            console.log(next_text);
+            setChats([...chats, user_text, next_text]);
+          });
+        })
+        .catch((error) => console.log(error));
       resetTranscript();
+      setIsListening(false);
     }
   }, [transcript, interimTranscript]);
 
@@ -110,8 +116,10 @@ function App() {
       <div style={styles.app}>
         <div style={styles.body}>
           <div style={styles.title}>Talk To Transformers</div>
-          <div style={styles.dropdown}>
+          <div>
+            Select Model:
             <Select
+              style={styles.dropdown}
               autoWidth={true}
               value={modelURL}
               onChange={(e) => {
@@ -127,7 +135,10 @@ function App() {
             </Select>
           </div>
           <div>
-            <p>{transcript}</p>
+            <p>
+              {transcript}
+              {isListening ? "Listening..." : "Thinking..."}
+            </p>
           </div>
         </div>
         <div id="chatBox" style={styles.chat}>
