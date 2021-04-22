@@ -56,6 +56,7 @@ function App() {
   const [modelURL, setModelURL] = useState(
     "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large",
   );
+  const synth = window.speechSynthesis;
 
   const {
     transcript,
@@ -66,9 +67,10 @@ function App() {
   useEffect(() => {
     if (interimTranscript === "" && transcript !== "") {
       const user_text = transcript;
-      console.log(user_text);
       const url = "/get_response_from_user_input";
+      console.log(`User: ${user_text}`);
       setIsListening(false);
+      SpeechRecognition.abortListening();
       fetch(url, {
         method: "POST",
         headers: {
@@ -91,8 +93,11 @@ function App() {
         .then((response) => {
           response.json().then((data) => {
             const { next_text } = data;
-            console.log(next_text);
+            console.log(`Bot: ${next_text}`);
+            const utterThis = new SpeechSynthesisUtterance(next_text);
+            synth.speak(utterThis);
             setChats([...chats, user_text, next_text]);
+            SpeechRecognition.startListening({ continuous: true });
           });
         })
         .catch((error) => console.log(error));
