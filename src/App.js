@@ -95,14 +95,16 @@ function App() {
             const { next_text } = data;
             console.log(`Bot: ${next_text}`);
             const utterThis = new SpeechSynthesisUtterance(next_text);
+            utterThis.onend = () => {
+              SpeechRecognition.startListening({ continuous: true });
+              setIsListening(true);
+            };
             synth.speak(utterThis);
             setChats([...chats, user_text, next_text]);
-            SpeechRecognition.startListening({ continuous: true });
           });
         })
         .catch((error) => console.log(error));
       resetTranscript();
-      setIsListening(false);
     }
   }, [transcript, interimTranscript]);
 
