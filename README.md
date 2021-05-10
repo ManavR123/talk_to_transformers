@@ -18,9 +18,9 @@ As for the UI of our website, we used the Material UI library to stylize our com
 
 ### Deployment
 
-Our app is currently deployed on Heroku, a lightweight cloud platform service. Heroku allowed us to deploy our app for unlimited time at no cost, with a simple, painless deployment process that required almost no changes to our codebase. This wouldn't have been feasible had we ultimately incorporated a PyTorch model directly into our backend, since `torch` by itself is too large to fit into Heroku's slog. However, we found a way to bypass this using HuggingFace!
+Our app is currently deployed on Heroku, a lightweight cloud platform service. Heroku allowed us to host our app for unlimited time at no cost, with a simple, painless deployment process that required almost no changes to our codebase. This wouldn't have been feasible had we ultimately incorporated a PyTorch model directly into our backend, since `torch` by itself is too large to fit into Heroku's slog. However, we found a way to bypass this using HuggingFace!
 
-The language models used in our application are hosted separately in the HuggingFace model hub. This model hub not only allows us to share the models we trained with everyone in community for direct use in their code, but also provides an accelerated inference API that allows us to generate responses for the user very quickly. 
+The language models used in our application are hosted separately in the [HuggingFace Model Hub](https://huggingface.co/models). This model hub not only allows us to share the models we trained with everyone in community for direct use in their code, but also provides an accelerated inference API that allows us to generate responses for the user very quickly. 
 
 This helped resolve what was initially the largest bottleneck in our development process, as reducing the latency caused by model inference is a difficult and costly problem with only a handful of solutions. For starters, we could have had the model in our app natively — this would have required us to host on a larger platform such as AWS, however, which poses additional few setup challenges and has much higher hosting costs. The HuggingFace approach, on the other hand, provides an easy-to-use API with excellent user experience while also posing a straightforward solution to the inference problem.
 
