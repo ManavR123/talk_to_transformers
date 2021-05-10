@@ -44,7 +44,7 @@ def valid_comment(comment):
     if len(words) > 200:
         return False
 
-    if len(set(words).intersection(STOP_WORDS)) < 3:
+    if len(set(words).intersection(STOP_WORDS)) < 1:
         return False
 
     if "http" in comment:
@@ -91,7 +91,7 @@ def scrape_subreddit(subreddit_name, num_posts, MAX_DEPTH=5):
 
         with open(os.path.join(subreddit_name, "comments.csv"), "a+", newline="", encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile, delimiter=",", quoting=csv.QUOTE_MINIMAL)
-            writer.writerows(comment_paths)
+            writer.writerows([[post.id] + path for path in comment_paths])
 
     with open(os.path.join(subreddit_name, "post_data.csv"), "a+", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=",", quoting=csv.QUOTE_MINIMAL)
