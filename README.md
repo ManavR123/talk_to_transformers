@@ -22,7 +22,7 @@ Our app is currently deployed on Heroku, a lightweight cloud platform service. H
 
 The language models used in our application are hosted separately in the HuggingFace model hub. This model hub not only allows us to share the models we trained with everyone in community for direct use in their code, but also provides an accelerated inference API that allows us to generate responses for the user very quickly. 
 
-This helped resolve what was initially the largest bottleneck in our development process, as reducing the latency caused by model inference is a difficult and costly problem with only a handful of solutions. For starters, we could have had the model in our app natively — this would have required us to host on a larger platform such as AWS, however, which poses additional few setup challenges and has much higher hosting costs. The HuggingFace approach, on the other hand, provides an easy-to-use API with excellent user experience while also posing an excellent solution to the inference problem.
+This helped resolve what was initially the largest bottleneck in our development process, as reducing the latency caused by model inference is a difficult and costly problem with only a handful of solutions. For starters, we could have had the model in our app natively — this would have required us to host on a larger platform such as AWS, however, which poses additional few setup challenges and has much higher hosting costs. The HuggingFace approach, on the other hand, provides an easy-to-use API with excellent user experience while also posing a straightforward solution to the inference problem.
 
 Of course, nothing comes without some cost. With HuggingFace, we are slightly rate-limited such that deploying this application to millions of users would not be possible under the free plan. Given the limited audience we are expecting for this project, however, this seemed like a sensible tradeoff.
 
@@ -43,7 +43,7 @@ We were inspired to train a model on the Berkeley subreddit not only since we ar
 
 ### Training
 
-The model is trained to optimize the probability of some target sequence T given a source source sequence S — i.e. P(T | S). You can train the model for multi-turn conversations, which is a sequence of targets T~1~, ..., T~k~, by optimizing all P(T~i~ | T~1~, ..., T~i-1~).
+The model is trained to optimize the probability of some target sequence T given a source source sequence S — i.e. P(T | S). You can train the model for multi-turn conversations, which is a sequence of targets T<sub>1</sub>, ..., T<sub>k</sub>, by optimizing all P(T<sub>i</sub> | T<sub>1</sub>, ..., T<sub>i-1</sub>).
 
 Therefore, we can train the model by calculating the probability of generating each next sequence in the conversation and subsequently optimizing with respect to that gradient.
 
