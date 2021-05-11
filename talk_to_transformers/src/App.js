@@ -9,6 +9,11 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
+let prefix = "";
+if (process.env.DEBUG) {
+  prefix = "http://localhost:5000";
+}
+
 const styles = {
   app: {
     display: "flex",
@@ -67,7 +72,7 @@ function App() {
   useEffect(() => {
     if (interimTranscript === "" && transcript !== "") {
       const user_text = transcript;
-      const url = "/get_response_from_user_input";
+      const url = `${prefix}/get_response_from_user_input`;
       console.log(`User: ${user_text}`);
       setIsListening(false);
       SpeechRecognition.abortListening();
