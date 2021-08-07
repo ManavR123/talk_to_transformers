@@ -61,7 +61,9 @@ function App() {
   const [modelURL, setModelURL] = useState(
     "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large",
   );
-  const synth = window.speechSynthesis;
+
+  let audioElement = document.createElement("audio");
+  audioElement.setAttribute("controls", true);
 
   const {
     transcript,
@@ -72,11 +74,11 @@ function App() {
   useEffect(() => {
     if (interimTranscript === "" && transcript !== "") {
       const user_text = transcript;
-      const url = `${prefix}/get_response_from_user_input`;
+      const get_word_url = `${prefix}/get_response_from_user_input`;
       console.log(`User: ${user_text}`);
       setIsListening(false);
       SpeechRecognition.abortListening();
-      fetch(url, {
+      fetch(get_word_url, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -99,12 +101,25 @@ function App() {
           response.json().then((data) => {
             const { next_text } = data;
             console.log(`Bot: ${next_text}`);
-            const utterThis = new SpeechSynthesisUtterance(next_text);
-            utterThis.onend = () => {
-              SpeechRecognition.startListening({ continuous: true });
-              setIsListening(true);
-            };
-            synth.speak(utterThis);
+
+            const get_sound_url = `${prefix}/get_sound_from_text`;
+            fetch(get_sound_url, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                input: next_text,
+              }),
+            }).then((response) => {
+              response.json().then((data) => {
+                const { src } = data;
+                audioElement.src = `data:audio/wav;base64,${src}`;
+                audioElement.play();
+              });
+            });
+
             setChats([...chats, user_text, next_text]);
           });
         })
